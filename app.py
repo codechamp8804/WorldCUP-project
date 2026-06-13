@@ -13,10 +13,19 @@ MODEL_PATH = Path("artifacts/model.joblib")
 
 
 @st.cache_resource
+@st.cache_resource
 def load_artifacts() -> dict:
     if not MODEL_PATH.exists():
-        st.error("Model not found. Run `python train_model.py --data data/results.csv` first.")
-        st.stop()
+        from train_model import train
+
+        data_path = Path("data/results.csv")
+        if not data_path.exists():
+            st.error("Dataset not found. Please add data/results.csv to the GitHub repo.")
+            st.stop()
+
+        with st.spinner("Training model for first launch..."):
+            train(data_path, MODEL_PATH)
+
     return joblib.load(MODEL_PATH)
 
 
